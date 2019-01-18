@@ -10,12 +10,20 @@ import UIKit
 
 class QuestionViewController: UIViewController {
     
+    @IBOutlet weak var questionLabel: UILabel!
+    
     @IBOutlet weak var singleStackView: UIStackView!
+    @IBOutlet var singleButtons: [UIButton]!
     
     @IBOutlet weak var multipleStackView: UIStackView!
+    @IBOutlet var multiLabels: [UILabel]!
+    @IBOutlet var multiSwitches: [UISwitch]!
     
     @IBOutlet weak var rangedStackView: UIStackView!
+    @IBOutlet weak var rangedSlider: UISlider!
+    @IBOutlet var rangedLabels: [UILabel]!
     
+    @IBOutlet weak var progressView: UIProgressView!
     
     var questionIndex = 0
     
@@ -55,6 +63,8 @@ class QuestionViewController: UIViewController {
         ),
 
     ]
+    
+    var answersChosen = [Answer]()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -67,18 +77,47 @@ class QuestionViewController: UIViewController {
         multipleStackView.isHidden = true
         rangedStackView.isHidden = true
         
-        navigationItem.title = "Вопрос № \(questionIndex + 1)"
-        
         let question = questions[questionIndex]
+        let answers = question.answers
+        let progress = Float(questionIndex) / Float(questions.count)
+        
+        navigationItem.title = "Вопрос № \(questionIndex + 1)"
+        questionLabel.text = question.text
+        questionLabel.numberOfLines = 0
+        progressView.setProgress(progress, animated: true)
         
         switch question.type {
         case .single:
-            singleStackView.isHidden = false
+            updateSingleStack(with: answers)
         case .multiple:
-            multipleStackView.isHidden = false
+            updateMultipleStack(with: answers)
         case .ranged:
-            rangedStackView.isHidden = false
+            updateRangedStack(with: answers)
         }
+    }
+    
+    func updateSingleStack(with answers: [Answer]) {
+        singleStackView.isHidden = false
+        
+        //            for i in 0..<singleButtons.count {
+        //                singleButtons[i].setTitle(answers[i].text, for: .normal)
+        //            }
+        guard singleButtons.count <= answers.count else { return }
+        singleButtons.enumerated().forEach {
+            $0.element.setTitle(answers[$0.offset].text, for: .normal)
+        }
+    }
+    
+    func updateMultipleStack(with answers: [Answer]) {
+        multipleStackView.isHidden = false
+        guard multiLabels.count <= answers.count else { return }
+        multiLabels.enumerated().forEach { $0.element.text = answers[$0.offset].text }
+    }
+    
+    func updateRangedStack(with answers: [Answer]) {
+        rangedStackView.isHidden = false
+        rangedLabels.first?.text = answers.first?.text
+        rangedLabels.last?.text = answers.last?.text
     }
     
 
@@ -91,5 +130,61 @@ class QuestionViewController: UIViewController {
         // Pass the selected object to the new view controller.
     }
     */
-
+    
+    
+    @IBAction func singleButtonPressed(_ sender: UIButton) {
+        let answers = questions[questionIndex].answers
+        
+        guard let index = singleButtons.index(of: sender) else { return }
+        
+        let answer = answers[index]
+        
+        answersChosen.append(answer)
+        print(#function, answer)
+        print()
+        
+        nextQuestion()
+    }
+    
+    @IBAction func multipleButtonPressed() {
+        let answers = questions[questionIndex].answers
+        
+        multiSwitches.enumerated().forEach {
+            if $0.element.isOn {
+                let answer = answers[$0.offset]
+                answersChosen.append(answer)
+                print(#function, answer)
+            }
+        }
+        
+        print()
+        
+        nextQuestion()
+    }
+    
+    @IBAction func rangedButtonPressed() {
+        let answers = questions[questionIndex].answers
+        
+        let index = Int(round(rangedSlider.value * Float(answers.count - 1)))
+        
+        let answer = answers[index]
+        answersChosen.append(answer)
+        
+        print(answer)
+        print()
+        
+        nextQuestion()
+    }
+    
+    func nextQuestion() {
+        questionIndex += 1
+        
+        if questionIndex < questions.count {
+            updateUI()
+        } else {
+            performSegue(withIdentifier: "ResultsSegue", sender: nil)
+        }
+        
+    }
+    
 }
