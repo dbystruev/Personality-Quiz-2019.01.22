@@ -318,10 +318,19 @@
                         <viewLayoutGuide key="safeArea" id="Lvo-By-XHF"/>
                     </view>
                     <navigationItem key="navigationItem" title="Результаты" id="efE-uB-EFv">
-                        <barButtonItem key="rightBarButtonItem" style="done" systemItem="done" id="RKH-c1-JgU"/>
+                        <barButtonItem key="rightBarButtonItem" style="done" systemItem="done" id="RKH-c1-JgU">
+                            <connections>
+                                <segue destination="XH8-ua-vCI" kind="unwind" unwindAction="unwindWithSegue:" id="S6l-LK-WL7"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
+                    <connections>
+                        <outlet property="answerLabel" destination="TRp-lP-WGG" id="xTk-ae-pof"/>
+                        <outlet property="definitionLabel" destination="e6R-Og-PNF" id="COp-sr-NkI"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="7Lo-oB-XGJ" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="XH8-ua-vCI" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="2801" y="126"/>
         </scene>
@@ -331,7 +340,7 @@
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="ink-Fe-r4y" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="StP-3V-Jn1">
-                        <rect key="frame" x="0.0" y="20" width="320" height="50"/>
+                        <rect key="frame" x="0.0" y="20" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>

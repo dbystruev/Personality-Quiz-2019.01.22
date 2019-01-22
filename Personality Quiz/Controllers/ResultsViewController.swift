@@ -10,6 +10,9 @@ import UIKit
 
 class ResultsViewController: UIViewController {
     
+    @IBOutlet weak var answerLabel: UILabel!
+    @IBOutlet weak var definitionLabel: UILabel!
+    
     var answers: [Answer]? {
         didSet {
             print(#function, answers ?? "nil")
@@ -18,19 +21,24 @@ class ResultsViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        
+        navigationItem.hidesBackButton = true
+        
+        calculateResult()
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    func calculateResult() {
+        var frequencyOfAnswers = [AnimalType: Int]()
+        
+        guard let answers = answers else { return }
+        
+        let types = answers.map { $0.type }
+        
+        types.forEach { frequencyOfAnswers[$0] = (frequencyOfAnswers[$0] ?? 0) + 1 }
+        
+        guard let winner = frequencyOfAnswers.sorted(by: { $0.value > $1.value }).first?.key else { return }
+        
+        answerLabel.text = "Вы — \(winner.rawValue)"
+        definitionLabel.text = winner.definition
     }
-    */
-
 }
